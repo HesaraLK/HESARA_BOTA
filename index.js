@@ -61,7 +61,7 @@ async function connectToWA() {
   const prefix = config.PREFIX;
   //===========================
 
-  console.log("Connecting HESARA_BOTA");
+  console.log("Connecting HESARAYA");
   const { state, saveCreds } = await useMultiFileAuthState(
     __dirname + "/auth_info_baileys/"
   );
@@ -92,10 +92,10 @@ async function connectToWA() {
           require("./plugins/" + plugin);
         }
       });
-      console.log("HESARA_BOTA installed successful ✅");
-      console.log("HESARA_BOTA connected to whatsapp ✅");
+      console.log("HESARAYA installed successful ✅");
+      console.log("HESARAYA connected to whatsapp ✅");
 
-      let up = `HESARA_BOTA connected successful ✅`;
+      let up = `HESARAYA connected successful ✅`;
       let up1 = `Hello Hesara, Yay, thanks to you I made bot successful`;
 
       robin.sendMessage(ownerNumber + "@s.whatsapp.net", {
