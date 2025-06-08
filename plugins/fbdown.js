@@ -4,7 +4,7 @@ const getFbVideoInfo = require("fb-downloader-scrapper");
 cmd(
   {
     pattern: "fb",
-    alias: ["facebook"],
+    alias: ["facebook", "fb"],
     react: "💀",
     desc: "Download Facebook Video",
     category: "download",
@@ -60,12 +60,11 @@ cmd(
 
       // Prepare and send the message with video details
       let desc = `
-*❤️ ROBIN FB VIDEO DOWNLOADER ❤️*
+*❤️ HESARAYA FB VIDEO DOWNLOADER ❤️*
 
-👻 *Title*: ${title || "Unknown"}
 👻 *Quality*: ${hd ? "HD Available" : "SD Only"}
 
-𝐌𝐚𝐝𝐞 𝐛𝐲 𝐒_𝐈_𝐇_𝐈_𝐋_𝐄_𝐋
+𝐌𝐚𝐝𝐞 𝐛𝐲 HESARAYA
         `;
       await robin.sendMessage(
         from,
