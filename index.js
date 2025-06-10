@@ -56,9 +56,7 @@ async function connectToWA() {
   const connectDB = require("./lib/mongodb");
   connectDB();
   //=======================
-  const { readEnv } = require("./lib/database");
-  const config = await readEnv();
-  const prefix = config.PREFIX;
+  const prefix = config.PREFIX || "."; // use existing config
   //===========================
 
   console.log("Connecting HESARAYA");
@@ -69,7 +67,7 @@ async function connectToWA() {
 
   const robin = makeWASocket({
     logger: P({ level: "silent" }),
-    printQRInTerminal: false,
+    printQRInTerminal: true,
     browser: Browsers.macOS("Firefox"),
     syncFullHistory: true,
     auth: state,
@@ -87,11 +85,17 @@ async function connectToWA() {
     } else if (connection === "open") {
       console.log(" Installing... ");
       const path = require("path");
-      fs.readdirSync("./plugins/").forEach((plugin) => {
-        if (path.extname(plugin).toLowerCase() == ".js") {
-          require("./plugins/" + plugin);
-        }
-      });
+const pluginFolder = "./plugins/";
+if (fs.existsSync(pluginFolder)) {
+  fs.readdirSync(pluginFolder).forEach((plugin) => {
+    if (path.extname(plugin).toLowerCase() === ".js") {
+      require(pluginFolder + plugin);
+    }
+  });
+} else {
+  console.log("[WARNING] plugins folder not found.");
+}
+
       console.log("HESARAYA installed successful ✅");
       console.log("HESARAYA connected to whatsapp ✅");
 
@@ -121,12 +125,12 @@ async function connectToWA() {
         ? mek.message.ephemeralMessage.message
         : mek.message;
     if (
-      mek.key &&
-      mek.key.remoteJid === "status@broadcast" && 
-      config.AUTO_READ_STATUS === "true"
-      ){
-      await robin.readMessages([mek.key]);
-    }
+  mek.key?.remoteJid === "status@broadcast" &&
+  (config.AUTO_READ_STATUS + "").toLowerCase() === "true"
+) {
+  await robin.readMessages([mek.key]);
+}
+
     
     const m = sms(robin, mek);
     const type = getContentType(mek.message);
@@ -163,11 +167,9 @@ async function connectToWA() {
     const isMe = botNumber.includes(senderNumber);
     const isOwner = ownerNumber.includes(senderNumber) || isMe;
     const botNumber2 = await jidNormalizedUser(robin.user.id);
-    const groupMetadata = isGroup
-      ? await robin.groupMetadata(from).catch((e) => {})
-      : "";
-    const groupName = isGroup ? groupMetadata.subject : "";
-    const participants = isGroup ? await groupMetadata.participants : "";
+    const groupMetadata = isGroup ? await robin.groupMetadata(from).catch((e) => null) : null;
+const groupName = groupMetadata?.subject || "";
+const participants = groupMetadata?.participants || [];
     const groupAdmins = isGroup ? await getGroupAdmins(participants) : "";
     const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false;
     const isAdmins = isGroup ? groupAdmins.includes(sender) : false;
